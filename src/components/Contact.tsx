@@ -4,11 +4,10 @@ import { Mail, Phone, MapPin, Linkedin, Send, CheckCircle, AlertCircle } from 'l
 import { GitHubIcon } from './GitHubIcon'
 import emailjs from '@emailjs/browser'
 
-// ── EmailJS config ──────────────────────────────────────────────────
-// Sign up free at https://emailjs.com, then replace these 3 values:
-const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  || 'YOUR_SERVICE_ID'
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID'
-const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  || 'YOUR_PUBLIC_KEY'
+// ── EmailJS config — replace the 3 values below with yours from emailjs.com ──
+const EMAILJS_SERVICE_ID  = 'service_sqgcdla'   // e.g. 'service_abc1234'
+const EMAILJS_TEMPLATE_ID = '3gxdg8a'  // e.g. 'template_xyz5678'
+const EMAILJS_PUBLIC_KEY  = 'L2U0BaAnmW7snKVTU'   // e.g. 'AbCdEfGhIjKlMnOp'
 // ───────────────────────────────────────────────────────────────────
 
 type FormState = { from_name: string; from_email: string; subject: string; message: string }
