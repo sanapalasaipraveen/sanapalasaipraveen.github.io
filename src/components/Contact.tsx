@@ -6,7 +6,7 @@ import emailjs from '@emailjs/browser'
 
 // ── EmailJS config — replace the 3 values below with yours from emailjs.com ──
 const EMAILJS_SERVICE_ID  = 'service_sqgcdla'   // e.g. 'service_abc1234'
-const EMAILJS_TEMPLATE_ID = '3gxdg8a'  // e.g. 'template_xyz5678'
+const EMAILJS_TEMPLATE_ID = 'template_3gxdg8a'  // e.g. 'template_xyz5678'
 const EMAILJS_PUBLIC_KEY  = 'L2U0BaAnmW7snKVTU'   // e.g. 'AbCdEfGhIjKlMnOp'
 // ───────────────────────────────────────────────────────────────────
 
