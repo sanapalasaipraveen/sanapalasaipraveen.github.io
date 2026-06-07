@@ -1,13 +1,29 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Github, Linkedin, Send, CheckCircle } from 'lucide-react'
+import { Mail, Phone, MapPin, Linkedin, Send, CheckCircle, AlertCircle } from 'lucide-react'
+import { GitHubIcon } from './GitHubIcon'
+import emailjs from '@emailjs/browser'
 
-type FormState = { name: string; email: string; subject: string; message: string }
+// ── EmailJS config ──────────────────────────────────────────────────
+// Sign up free at https://emailjs.com, then replace these 3 values:
+const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  || 'YOUR_SERVICE_ID'
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID'
+const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  || 'YOUR_PUBLIC_KEY'
+// ───────────────────────────────────────────────────────────────────
+
+type FormState = { from_name: string; from_email: string; subject: string; message: string }
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
 export function Contact() {
-  const [form, setForm] = useState<FormState>({ name: '', email: '', subject: '', message: '' })
+  const formRef = useRef<HTMLFormElement>(null)
+  const [form, setForm] = useState<FormState>({
+    from_name: '',
+    from_email: '',
+    subject: '',
+    message: '',
+  })
   const [status, setStatus] = useState<Status>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
@@ -16,11 +32,24 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('sending')
-    // Integrate with EmailJS / Formspree / your backend here
-    await new Promise((r) => setTimeout(r, 1500))
-    setStatus('sent')
-    setForm({ name: '', email: '', subject: '', message: '' })
-    setTimeout(() => setStatus('idle'), 4000)
+    setErrorMsg('')
+
+    try {
+      await emailjs.sendForm(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        formRef.current!,
+        { publicKey: EMAILJS_PUBLIC_KEY }
+      )
+      setStatus('sent')
+      setForm({ from_name: '', from_email: '', subject: '', message: '' })
+      setTimeout(() => setStatus('idle'), 5000)
+    } catch (err: unknown) {
+      console.error('EmailJS error:', err)
+      setStatus('error')
+      setErrorMsg('Failed to send. Please email me directly at saipraveensanapala776@gmail.com')
+      setTimeout(() => setStatus('idle'), 6000)
+    }
   }
 
   const inputClass =
@@ -47,7 +76,7 @@ export function Contact() {
             <span className="gradient-text">Build Together</span>
           </h2>
           <p className="section-subheading mx-auto text-center">
-            Open to SDE-2 / Senior Engineer / AI Engineer roles and interesting conversations about
+            Open to SDE-2 / Senior Engineer / AI Engineer roles and conversations about
             distributed systems, AI orchestration, or Cisco ACI automation.
           </p>
         </motion.div>
@@ -62,7 +91,6 @@ export function Contact() {
           >
             <div className="glass-card p-6 space-y-5">
               <h3 className="font-display font-bold text-white text-lg">Get In Touch</h3>
-
               {[
                 { icon: Mail, label: 'Email', value: 'saipraveensanapala776@gmail.com', href: 'mailto:saipraveensanapala776@gmail.com' },
                 { icon: Phone, label: 'Phone', value: '+91 9177563805', href: 'tel:+919177563805' },
@@ -90,12 +118,12 @@ export function Contact() {
               <h3 className="font-display font-semibold text-white text-sm mb-4">Connect</h3>
               <div className="flex gap-3">
                 <a
-                  href="https://github.com"
+                  href="https://github.com/saipraveensanapala776"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-white/25 hover:bg-white/5 transition-all duration-200 text-sm"
                 >
-                  <Github className="w-4 h-4" />
+                  <GitHubIcon className="w-4 h-4" />
                   GitHub
                 </a>
                 <a
@@ -135,42 +163,52 @@ export function Contact() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="flex flex-col items-center justify-center py-12 text-center"
+                  className="flex flex-col items-center justify-center py-16 text-center"
                 >
-                  <CheckCircle className="w-12 h-12 text-emerald-400 mb-4" />
+                  <CheckCircle className="w-14 h-14 text-emerald-400 mb-4" />
                   <h4 className="font-display font-bold text-white text-xl mb-2">Message Sent!</h4>
-                  <p className="text-slate-400">Thanks for reaching out — I'll respond within 24 hours.</p>
+                  <p className="text-slate-400 text-sm">
+                    Thanks for reaching out — I'll reply to{' '}
+                    <span className="text-sky-400">{form.from_email || 'you'}</span> within 24 hours.
+                  </p>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-slate-500 font-medium mb-1.5">Name</label>
+                      <label className="block text-xs text-slate-500 font-medium mb-1.5">
+                        Your Name <span className="text-rose-400">*</span>
+                      </label>
                       <input
                         type="text"
-                        name="name"
-                        value={form.name}
+                        name="from_name"
+                        value={form.from_name}
                         onChange={handleChange}
                         required
-                        placeholder="Your name"
+                        placeholder="John Doe"
                         className={inputClass}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-500 font-medium mb-1.5">Email</label>
+                      <label className="block text-xs text-slate-500 font-medium mb-1.5">
+                        Your Email <span className="text-rose-400">*</span>
+                      </label>
                       <input
                         type="email"
-                        name="email"
-                        value={form.email}
+                        name="from_email"
+                        value={form.from_email}
                         onChange={handleChange}
                         required
-                        placeholder="your@email.com"
+                        placeholder="you@company.com"
                         className={inputClass}
                       />
                     </div>
                   </div>
+
                   <div>
-                    <label className="block text-xs text-slate-500 font-medium mb-1.5">Subject</label>
+                    <label className="block text-xs text-slate-500 font-medium mb-1.5">
+                      Subject <span className="text-rose-400">*</span>
+                    </label>
                     <input
                       type="text"
                       name="subject"
@@ -181,8 +219,11 @@ export function Contact() {
                       className={inputClass}
                     />
                   </div>
+
                   <div>
-                    <label className="block text-xs text-slate-500 font-medium mb-1.5">Message</label>
+                    <label className="block text-xs text-slate-500 font-medium mb-1.5">
+                      Message <span className="text-rose-400">*</span>
+                    </label>
                     <textarea
                       name="message"
                       value={form.message}
@@ -193,6 +234,18 @@ export function Contact() {
                       className={`${inputClass} resize-none`}
                     />
                   </div>
+
+                  {status === 'error' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-start gap-2.5 p-3 rounded-lg bg-rose-400/10 border border-rose-400/20"
+                    >
+                      <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+                      <p className="text-rose-300 text-sm">{errorMsg}</p>
+                    </motion.div>
+                  )}
+
                   <motion.button
                     type="submit"
                     disabled={status === 'sending'}

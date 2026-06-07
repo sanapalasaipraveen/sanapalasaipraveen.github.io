@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
-import { Github, Linkedin, Mail, Zap, Heart } from 'lucide-react'
+import { Linkedin, Mail, Zap, Heart } from 'lucide-react'
+import { GitHubIcon } from './GitHubIcon'
 
 const navLinks = [
   { href: '#about', label: 'About' },
@@ -54,7 +55,7 @@ export function Footer() {
           {/* Socials */}
           <div className="flex items-center gap-3">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="GitHub">
-              <Github className="w-4 h-4" />
+              <GitHubIcon className="w-4 h-4" />
             </a>
             <a href="https://linkedin.com/in/sai-praveen" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
               <Linkedin className="w-4 h-4" />

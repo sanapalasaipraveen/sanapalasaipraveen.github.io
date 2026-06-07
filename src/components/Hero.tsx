@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { TypeAnimation } from 'react-type-animation'
-import { Download, Mail, Github, Linkedin, ArrowDown, Terminal } from 'lucide-react'
+import { Download, Mail, Linkedin, ArrowDown, Terminal } from 'lucide-react'
+import { GitHubIcon } from './GitHubIcon'
 import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
 
@@ -145,7 +146,7 @@ export function Hero() {
           {/* Socials */}
           <motion.div variants={itemVariants} className="flex items-center gap-3">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="GitHub">
-              <Github className="w-4 h-4" />
+              <GitHubIcon className="w-4 h-4" />
             </a>
             <a href="https://linkedin.com/in/sai-praveen" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
               <Linkedin className="w-4 h-4" />
